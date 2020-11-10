@@ -1,6 +1,4 @@
-# mocha-scripts
-
-Python Scripts for Mocha.
+# Example Python Scripts for Mocha Pro
 
 These scripts are examples of how to use the Mocha Pro Python API.
 
