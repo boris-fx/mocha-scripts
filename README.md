@@ -91,7 +91,7 @@ for key, value in list(actions_dict.items()):
 
 If you need to check Python error output after loading an `init.py` script, load the error log from the Help menu, or load mocha via the terminal.
 
-## Rgistering a custom exporter script with `init.py`
+## Registering a custom exporter script with `init.py`
 
 If you have a new custom exporter and want it to appear in the Mocha export list, you need to register it inside `init.py`.
 
