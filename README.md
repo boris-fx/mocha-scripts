@@ -18,9 +18,9 @@ The default init.py path is the Imaginer Systems Scripts directory.
 
 The mocha `init.py` script is generated per system in the following default locations:
 
--   **OS X:** '~/Library/Application Support/Imagineer Systems Ltd/Scripts/init.py'
--   **Windows:** 'C:\\Users\[username]\\AppData\\Roaming\\Imagineer Systems Ltd\\Scripts\\init.py'
--   **Linux:** '~/.config/Imagineer Systems Ltd/Scripts/init.py'
+- **OS X:** '~/Library/Application Support/Imagineer Systems Ltd/Scripts/init.py'
+- **Windows:** 'C:\\Users\[username]\\AppData\\Roaming\\Imagineer Systems Ltd\\Scripts\\init.py'
+- **Linux:** '~/.config/Imagineer Systems Ltd/Scripts/init.py'
 
 You can also set the environment variable 'MOCHA_INIT_SCRIPT' to control where the path of the `init.py` initialization script resides.
 
@@ -42,6 +42,7 @@ from mocha import ui
 
 mocha_widget = ui.get_widgets()
 main_window = mocha_widget['MainWindow'] # Define the MainWidget UI to use as a parent
+widgets = ui.application.allWidgets()
 
 mocha_menubar = list(filter(lambda wgt: isinstance(wgt, QMenuBar), widgets))[0]
 scripts_menu = mocha_menubar.addMenu('Scripts') #create a new Scripts menu option
@@ -103,4 +104,5 @@ import export_mistika_tracker_points
 mistika_export = export_mistika_tracker_points.MistikaExporter()
 mistika_export.register()
 ```
+
 Be aware that if you register a custom export with the same name as an existing export, you may get a conflict.
