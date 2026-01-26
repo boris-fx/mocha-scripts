@@ -29,38 +29,28 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# If 2026, use PySide6. If 2025.5 or earlier (to v6), use Pyside2.
-try:
-    from PySide2 import QtCore, QtWidgets
-    from PySide2.QtCore import *
-    from PySide2.QtWidgets import *
-except ImportError:
-    from PySide6 import QtCore, QtWidgets
-    from PySide6.QtCore import *
-    from PySide6.QtWidgets import *
-from random import *
-from mocha.project import get_current_project
+import subprocess
+from mocha.project import get_current_project, View
+import os
+import platform
 
+def reveal_clip_in_browser():
+    proj = get_current_project()
+    clip = proj.default_trackable_clip
+    clip_path = clip.get_info(View(0)).path
 
-class RandomiseColours():
-    def __init__(self, parent=None):
-        self.proj = get_current_project()
-
-    def do_color(self):
-        if not self.proj:
-            msg = QMessageBox(self)
-            msg.setText("No project open")
-            msg.exec_()
-        layers = self.proj.layers
-        if not layers:
-            msg = QMessageBox(self)
-            msg.setText("No layers in project")
-            msg.exec_()
-
-        for layer in layers:
-            layer.matte_color = (random(), random(), random())
+    location = ""
+    for file in os.listdir(clip_path):
+        if file.startswith(clip.name):
+            location = (os.path.join(clip_path, file))
+            sys = platform.system()
+            if sys == "Windows":
+                win_location = location.replace('/','\\')
+                win_cmd = fr'explorer /select,"{win_location}"'
+                subprocess.Popen(win_cmd)
+            else:
+                subprocess.call(["open", "-R", location])
 
 
 if __name__ == "__main__":
-    color = RandomiseColours()
-    color.do_color()
+    reveal_clip_in_browser()

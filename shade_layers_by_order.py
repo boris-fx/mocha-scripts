@@ -1,6 +1,6 @@
 # BSD 3-Clause License
 #
-# Copyright (c) 2020, Boris FX
+# Copyright (c) 2026, Boris FX
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import shiboken2
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from random import *
 from mocha.project import get_current_project
 
 
@@ -50,9 +46,8 @@ class ShadeMattesByOrder():
             msg.setText("No layers in project")
             msg.exec_()
 
-        divider = 1.0 / len(layers)
         for idx, layer in enumerate(layers):
-            shade = 1.0 - ((idx + 1) * divider)
+            shade = 1.0 / (idx + 1)
             layer.matte_color = (shade, shade, shade)
 
 

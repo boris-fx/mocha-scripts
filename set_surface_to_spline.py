@@ -1,7 +1,6 @@
-
 # BSD 3-Clause License
 #
-# Copyright (c) 2020, Boris FX
+# Copyright (c) 2026, Boris FX
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,23 +28,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from mocha.project import Project, Clip, View, StreamInfo, ColorParameters, ColorConversion, Colorspace, \
-    InterlaceMode, Layer, LayerGroup, XSplineContour, XControlPoint, XControlPointData, \
-    BezierContour, BezierControlPoint, BezierControlPointData, ColorizeOutput, RenderRemoveOperation, get_current_project
-import sys
-import subprocess
-import ast
-from collections import OrderedDict
+from mocha.project import get_current_project
+from mocha.ui import get_widgets
 
-import shiboken2
-
-#If v6, use Pyside2. If V5 or earlier use Pyside
+# If 2026, use PySide6. If 2025.5 or earlier (to v6), use Pyside2.
 try:
-    from PySide.QtGui import *
-    from PySide.QtCore import *
-except ImportError:
-    from PySide2.QtWidgets import *
+    from PySide2 import QtCore, QtWidgets
     from PySide2.QtCore import *
+    from PySide2.QtWidgets import *
+except ImportError:
+    from PySide6 import QtCore, QtWidgets
+    from PySide6.QtCore import *
+    from PySide6.QtWidgets import *
+
 
 class SetSurfaceToSpline():
 
@@ -58,12 +53,9 @@ class SetSurfaceToSpline():
         layer_tree = self.get_layer_tree()
         self.selected_idxs = layer_tree.selectedIndexes()
 
-
     def get_layer_tree(self):
-        widgets = self.app.allWidgets()
-
-        lt = list(filter(lambda wgt: wgt.objectName() == "layerTreeView", widgets))[0]
-        return shiboken2.wrapInstance(shiboken2.getCppPointer(lt)[0], QTreeView)
+        widgets = get_widgets()
+        return widgets['LayerControl']
 
     def get_surface_parameters(self, layer):
 
@@ -80,7 +72,7 @@ class SetSurfaceToSpline():
             surface_corners.append(xy_data)
         surface_frame = self.proj.parameter([name, u'SurfaceFrame']).get()
 
-        #print(surface_corners)
+        # print(surface_corners)
         return surface_corners, surface_frame
 
     def set_surface_corners(self):
@@ -89,9 +81,9 @@ class SetSurfaceToSpline():
             layer = self.proj.layer(idx.row())
 
         name = layer.name
-        #replace spaces in name with underscores to match internal project names
+        # replace spaces in name with underscores to match internal project names
         if ' ' in name:
-           name = name.replace(' ', '_')
+            name = name.replace(' ', '_')
 
         contour_points = layer.contours[0].control_points
 
