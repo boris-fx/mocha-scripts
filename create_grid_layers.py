@@ -33,10 +33,8 @@ from mocha.project import *
 
 # If 2026, use PySide6. If 2025.5 or earlier (to v6), use Pyside2.
 try:
-    from PySide2.QtCore import QCoreApplication
     from PySide2.QtWidgets import *
 except ImportError:
-    from PySide6.QtCore import QCoreApplication
     from PySide6.QtWidgets import *
 
 app = QApplication.instance()

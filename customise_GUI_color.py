@@ -31,12 +31,8 @@
 
 # If 2026, use PySide6. If 2025.5 or earlier (to v6), use Pyside2.
 try:
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
     from PySide2.QtWidgets import *
 except ImportError:
-    from PySide6.QtCore import *
-    from PySide6.QtGui import *
     from PySide6.QtWidgets import *
 
 class ColorChangeDialog(QDialog):

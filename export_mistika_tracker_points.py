@@ -36,6 +36,9 @@ try:
 except ImportError:
     from PySide6.QtCore import QByteArray
 
+__author__ = 'Boris FX'
+
+from mocha.exporters import *
 
 class MistikaExporter(AbstractTrackingDataExporter):
     """
@@ -43,7 +46,7 @@ class MistikaExporter(AbstractTrackingDataExporter):
     """
 
     def __init__(self):
-        super(MistikaExporter, self).__init__("Mistika Point Tracker File (*.trk)", "")  # Define the CSV exporter
+        super(MistikaExporter, self).__init__("Mistika Point Tracker File (*.trk)", "")  # Define the Mistika exporter
         self._project = None
 
     def error_string(self):
@@ -62,16 +65,17 @@ class MistikaExporter(AbstractTrackingDataExporter):
         layer_in = layer.in_point()
         layer_out = layer.out_point()
 
-        in_out_header = str(layer_in) + "\n\n" + str(layer_out) + "\n"  # initalize file with in and out points of layer
+        header = str(4) + "\n\n"  # initalize file with number of corner points
+        point_header = str(layer_out) + "\n"  # number of frames
+        mistika_order = [2, 3, 1, 0]
 
-        for idx in range(4, 0, -1):  # Mistika corner pin is in reverse point  order to Mocha surface
-            ba.append(in_out_header.encode('utf-8'))
-            for frame in range(layer_in, (layer_out + 1)):
+        ba.append(header.encode('utf-8'))
+        for idx in mistika_order:
+            ba.append(point_header.encode('utf-8'))
+            for frame in range(layer_in, (layer_out)):
                 surface_corner = layer.get_surface_position(idx, frame, view)
                 result = format(frame, '.6f') + " " + " ".join(
-                    map(lambda x: str(x), surface_corner)) + " 0.000000" + "\n"
+                    map(lambda x: str(format(x, '.6f')), surface_corner)) + " 0.000000 " + "\n"
                 ba.append(result.encode('utf-8'))
-            ba.append("\n\n\n".encode('utf-8'))
-        return {tracking_file_path if tracking_file_path.lower().endswith(".csv") else tracking_file_path + '.trk': ba}
-
-# surface = self.get_surface_parameters(layer, frame, view)
+            ba.append("\n\n".encode('utf-8'))
+        return {tracking_file_path if tracking_file_path.lower().endswith(".trk") else tracking_file_path + '.trk': ba}

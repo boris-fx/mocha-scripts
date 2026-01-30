@@ -28,6 +28,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+# If 2026, use PySide6. If 2025.5 or earlier (to v6), use Pyside2.
+try:
+    from PySide2.QtWidgets import QMessageBox
+except ImportError:
+    from PySide6.QtWidgets import QMessageBox
+
 from mocha.project import get_current_project
 
 
@@ -37,7 +44,7 @@ class ShadeMattesByOrder():
 
     def do_shading(self):
         if not self.proj:
-            msg = QMessageBox(self)
+            msg = QMessageBox()
             msg.setText("No project open")
             msg.exec_()
         layers = self.proj.layers
