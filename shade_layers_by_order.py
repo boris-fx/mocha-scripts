@@ -49,7 +49,7 @@ class ShadeMattesByOrder():
             msg.exec_()
         layers = self.proj.layers
         if not layers:
-            msg = QMessageBox(self)
+            msg = QMessageBox()
             msg.setText("No layers in project")
             msg.exec_()
 

@@ -46,7 +46,7 @@ class MistikaExporter(AbstractTrackingDataExporter):
     """
 
     def __init__(self):
-        super(MistikaExporter, self).__init__("Mistika Point Tracker File (*.trk)", "")  # Define the Mistika exporter
+        super(MistikaExporter, self).__init__("Mistika Point Tracker File", ".trk")  # Define the Mistika exporter
         self._project = None
 
     def error_string(self):
