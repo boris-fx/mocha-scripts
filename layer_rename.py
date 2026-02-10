@@ -1,6 +1,6 @@
 # BSD 3-Clause License
 #
-# Copyright (c) 2020, Boris FX
+# Copyright (c) 2026, Boris FX
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,17 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import shiboken2
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+from mocha.project import get_current_project
+
+# If 2026, use PySide6. If 2025.5 or earlier (to v6), use Pyside2.
+try:
+    from PySide2 import QtCore, QtWidgets
+    from PySide2.QtCore import *
+    from PySide2.QtWidgets import *
+except ImportError:
+    from PySide6 import QtCore, QtWidgets
+    from PySide6.QtCore import *
+    from PySide6.QtWidgets import *
 
 
 class LayerRenameDialog(QDialog):
@@ -42,16 +50,16 @@ class LayerRenameDialog(QDialog):
         self.create_connections()
 
     def create_widgets(self):
-        self._widgets['old_name'] = QLineEdit(self)
-        self._widgets['new_name'] = QLineEdit(self)
+        self._widgets['layer_text'] = QLineEdit(self)
+        self._widgets['replacement_text'] = QLineEdit(self)
         self._widgets['ok'] = QPushButton("OK", self)
         self._widgets['cancel'] = QPushButton("Cancel", self)
 
     def create_layout(self):
         main_layout = QGridLayout(self)
         form_layout = QFormLayout(self)
-        form_layout.addRow("Old name:", self._widgets['old_name'])
-        form_layout.addRow("New name:", self._widgets['new_name'])
+        form_layout.addRow("Find:", self._widgets['layer_text'])
+        form_layout.addRow("Replace:", self._widgets['replacement_text'])
         main_layout.addLayout(form_layout, 0, 0, 3, 3)
         main_layout.addWidget(self._widgets['ok'], 3, 1)
         main_layout.addWidget(self._widgets['cancel'], 3, 2)
@@ -65,15 +73,12 @@ class LayerRenameDialog(QDialog):
         proj = get_current_project()
         if not proj:
             self.reject()
-        old_name = self._widgets['old_name'].text()
-        new_name = self._widgets['new_name'].text()
-        layers = proj.find_layers(old_name)
-        if not layers:
-            msg = QMessageBox(self)
-            msg.setText("No layers with name %s" % old_name)
-            msg.exec_()
-            self.reject()
-        map(lambda layer: setattr(layer, 'name', new_name), layers)
+        old_text = self._widgets['layer_text'].text()
+        new_text = self._widgets['replacement_text'].text()
+        layers = proj.layers
+        for layer in layers:
+            if old_text in layer.name:
+                layer.name = layer.name.replace(old_text, new_text)
         self.accept()
 
 

@@ -1,6 +1,6 @@
 # BSD 3-Clause License
 #
-# Copyright (c) 2020, Boris FX
+# Copyright (c) 2026, Boris FX
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,23 +31,23 @@
 from mocha.project import *
 from mocha.ui import find_widget
 
-# If v6, use Pyside2. If V5 or earlier use Pyside
+# Try PySide2, if not try Pyside6
 try:
-    from PySide.QtGui import QLineEdit
-    from PySide.QtGui import QSlider
-except ImportError:
     from PySide2.QtWidgets import QLineEdit
     from PySide2.QtWidgets import QSlider
+except ImportError:
+    from PySide6.QtWidgets import QLineEdit
+    from PySide6.QtWidgets import QSlider
 
 
-def get_surface_parameters(self, layer, time=0, view=View(0)):
+def get_surface_parameters(layer, time=0, view=View(0)) -> list:
     surface_corners = []
     for idx in range(0, 4):
         surface_corners.extend(layer.get_surface_position(idx, time, view))
     return surface_corners
 
 
-def get_current_playhead_time():
+def get_current_playhead_time() -> float:
     current_time_widget = find_widget('tcedtCurrentFrame', QLineEdit)
     current_time = float(current_time_widget.text())
 
@@ -64,3 +64,40 @@ def set_current_playhead_time(frame):
 
     return current_time_slider.value()
 
+
+def get_selected_layers(proj) -> list:
+    layers = proj.layers
+    selected_layers = []
+    for layer in layers:
+        if layer.selected:
+            selected_layers.append(layer)
+    return selected_layers
+
+
+def get_selected_control_points(proj) -> list:
+    selected_points = []
+
+    for layer in proj.layers:
+        if layer.selected:
+            for contour in layer.contours:
+                for point in contour.control_points:
+                    if point.selected:
+                        selected_points.append(point)
+    return selected_points
+
+
+def set_selected_layer_param(proj, param: list, value) -> None:
+    '''
+    Sets parameter value in a layer based on the parameter list
+    For example:
+    ["Basic", "MotionBlurMatte"] has a value of True or False
+    ["Basic", "BlendMode"] has a value of 0 (Add), 1 (Subtract) or 3 (Transparent)
+    Calling the function:
+    set_selected_layer_param(project, ["Basic", "BlendMode"], 0)
+    '''
+
+    layers = proj.layers
+
+    for layer in layers:
+        if layer.selected:
+            layer.parameter(param).set(value)

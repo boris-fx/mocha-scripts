@@ -35,51 +35,45 @@ try:
 except ImportError:
     from PySide6.QtWidgets import *
 
-class ColorChangeDialog(QDialog):
-    def __init__(self, parent=None):
+from mocha.project import get_current_project
+from mocha.ui import get_widgets
+
+
+class LayerPrepend():
+
+    def __init__(self):
+
         self.app = QApplication.instance()
-        QDialog.__init__(self, parent)
-        self._widgets = dict()
-        self.create_widgets()
-        self.create_layout()
-        self.create_connections()
+        self.layer_tree = self.get_layer_tree()
+        self.layer_prepend()
 
-    def create_widgets(self):
-        self._widgets['background'] = QLineEdit(self, text="#111111")
-        self._widgets['text'] = QLineEdit(self, text="#FFFFFF")
-        self._widgets['tab'] = QLineEdit(self, text="#000000")
-        self._widgets['ok'] = QPushButton("OK", self)
-        self._widgets['cancel'] = QPushButton("Cancel", self)
+    def get_layer_tree(self):
+        widgets = get_widgets()
+        return widgets['LayerControl']
 
-    def create_layout(self):
-        main_layout = QGridLayout(self)
-        form_layout = QFormLayout(self)
-        form_layout.addRow("Background:", self._widgets['background'])
-        form_layout.addRow("Text:", self._widgets['text'])
-        form_layout.addRow("Tab Colour:", self._widgets['tab'])
-        main_layout.addLayout(form_layout, 0, 0, 3, 3)
-        main_layout.addWidget(self._widgets['ok'], 3, 1)
-        main_layout.addWidget(self._widgets['cancel'], 3, 2)
-        self.setLayout(main_layout)
+    def layer_prepend(self):
 
-    def create_connections(self):
-        self._widgets['ok'].clicked.connect(self.adjust_style_sheet)
-        self._widgets['cancel'].clicked.connect(self.reject)
+        selected_layers = self.layer_tree.selectedIndexes()
 
-    def adjust_style_sheet(self):
-        bgd = self._widgets['background'].text()
-        text = self._widgets['text'].text()
-        tab = self._widgets['tab'].text()
+        if len(selected_layers) > 0:
+            dlg = QDialog()
+            layout = QFormLayout()
+            edt = QLineEdit()
+            layout.addRow("Prefix", edt)
+            btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+            btn_box.accepted.connect(dlg.accept)
+            btn_box.rejected.connect(dlg.reject)
+            layout.addRow(btn_box)
+            dlg.setLayout(layout)
+            if dlg.exec_() == QDialog.Accepted:
+                self.prepend_selected_layers(edt.text())
+                #self.layer_tree.update()
 
-        print(bgd, text, tab)
+    def prepend_selected_layers(self, prefix):
 
-        style = self.app.styleSheet()
+        project = get_current_project()
+        selected_layers = self.layer_tree.selectedIndexes()
 
-        style += """
-        QWidget {
-            background-color: %s;
-            color: %s
-        }
-        """ % (bgd, text)
-
-        self.app.setStyleSheet(style)
+        for idx in selected_layers:
+            layer = project.layer(idx.row())
+            layer.name = prefix + layer.name

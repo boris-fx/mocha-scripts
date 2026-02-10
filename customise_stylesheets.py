@@ -1,6 +1,6 @@
 # BSD 3-Clause License
 #
-# Copyright (c) 2021, Boris FX
+# Copyright (c) 2026, Boris FX
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__author__ = 'Boris FX'
-
 from mocha import ui
-
 
 mocha_widgets = ui.get_widgets()
 main_window = mocha_widgets['MainWindow']
@@ -71,3 +68,4 @@ main_window.setStyleSheet(
     "QTabBar::tab:selected {background: black;}"
     "QTabWidget::pane QWidget{background-color: #282C34;}"
 )
+print("Loaded Stylesheet changes")
